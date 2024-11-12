@@ -31,6 +31,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Tailwind CSS build files
+app/static/css/styles.css
+
 # Static file cache or build output (if applicable)
 static/css/styles.css
 static/css/*.map
@@ -43,3 +46,11 @@ static/css/*.map
 htmlcov/
 .pytest_cache/
 .tox/
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+
+
+# MyPy cache
+.mypy_cache/
+
