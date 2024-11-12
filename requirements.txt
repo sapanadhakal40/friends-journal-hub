@@ -1,0 +1,7 @@
+Flask==2.3.2
+Flask-WTF==1.0.0  # If you're using WTForms for forms
+Flask-SQLAlchemy==2.5.1  # If you're using SQLAlchemy for database integration
+flask-login==0.6.1  # If you're using user authentication and sessions
+Flask-Mail==0.9.1  # If you're using email verification or notifications
+gunicorn==20.1.0  # Optional, for deploying in production
+
