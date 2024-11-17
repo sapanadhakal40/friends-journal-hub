@@ -18,6 +18,8 @@
             <a href="/" class="hover:text-gray-200 hover:bg-slate-500">Home</a>
             <a href="/about" class="hover:text-blue-300">About</a>
         <a href="/contact" class="hover:text-blue-300">Contact</a>
+        <a href="/register" class="hover:text-gray-700">Register</a>
+                <a href="/login" class="hover:text-gray-700">Login</a>
       </div>
 
 
@@ -47,7 +49,17 @@
 
 
 
-
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="flash-messages">
+            {% for message in messages %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
 
     
     <main class="flex-grow container mx-auto px-4 py-8">

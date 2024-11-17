@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Login - FriendJournal{% endblock %}
+
+{% block content %}
+<h2 class="text-lg font-semibold text-blue-500">Login</h2>
+<form method="POST" action="{{ url_for('login') }}">
+    <label>Email:</label>
+    <input type="email" name="email" class="border rounded px-2 py-1" required>
+    <br>
+    <label>Password:</label>
+    <input type="password" name="password" class="border rounded px-2 py-1" required>
+    <br>
+    <button type="submit" class="bg-blue-500 text-white rounded px-4 py-2 mt-2">Login</button>
+</form>
+{% endblock %}

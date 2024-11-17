@@ -5,3 +5,4 @@ flask-login==0.6.1  # If you're using user authentication and sessions
 Flask-Mail==0.9.1  # If you're using email verification or notifications
 gunicorn==20.1.0  # Optional, for deploying in production
 Flask-Bcrypt==1.0.1  # For password hashing
+flask-mysqldb==2.0.0  # mysql database
