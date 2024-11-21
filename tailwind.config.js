@@ -5,7 +5,18 @@ module.exports = {
     './app/static/js/**/*.js'     // If you have JavaScript files in a static folder
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+      },
+    },
+    screens: {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
   },
   plugins: [],
 }
