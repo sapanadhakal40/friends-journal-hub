@@ -13,6 +13,10 @@ def register_routes(app):
         return redirect(url_for('home'))
     
     
+
+    
+    
+    
     @app.route('/test_email')
    
           
@@ -28,8 +32,15 @@ def register_routes(app):
             return "Flask-Mail: Email sent successfully!"
         except Exception as e:
            return f"Failed to send email: {str(e)}"
+       
+       
+       
     @app.route('/register', methods=['GET', 'POST'])
+    
+    
     def register():
+        cursor = None  # Initialize cursor to None
+        connection = None  # Initialize connection to None
         if request.method == 'POST':
             username = request.form['username']
             email = request.form['email']
@@ -60,22 +71,28 @@ def register_routes(app):
             except Exception as e:
                 flash(f'Error: {str(e)}', 'danger')
             finally:
-                cursor.close()
-                connection.close()
+                if cursor:
+                   cursor.close()
+                if connection:
+                   connection.close()
         return render_template('register.html')
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():
+        cursor = None  # Initialize cursor to None
+        connection = None  # Initialize connection to None
         if request.method == 'POST':
-            email = request.form['email']
+            email = request.form.get('email','')
+            print(f"Email in login form: {email}")
             password = request.form['password']
+            
+            
 
             try:
                 connection = app.get_db_connection()
                 cursor = connection.cursor(dictionary=True)
                 
-                  # Debug: Print the email entered
-                print(f"Email entered: {email}")
+                
 
                 cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
                 user = cursor.fetchone()
@@ -83,20 +100,31 @@ def register_routes(app):
                  # Debug: Print the user fetched from the database
                 print(f"User fetched: {user}")
 
-                if user and check_password_hash(user['password_hash'], password):
+        
+                if user:
+                  print(f"Stored hash: {user['password_hash']}")  # Debug: Print stored hash
+                  if check_password_hash(user['password_hash'], password):
                     session['user_id'] = user['id']
                     flash('Login successful!')
                     return redirect(url_for('home'))
-                else:
+                  else:
                     flash('Invalid email or password!', 'danger')
+                else:
+                   flash('Invalid email or password!', 'danger')
+                   
+                  # Consume remaining results if any
+                cursor.fetchall()   
+                
+                
             except Exception as e:
-                flash(f'Error: {str(e)}', 'danger')
-                print(f"Error: {str(e)}")
+               flash(f'Error: {str(e)}', 'danger')
+               print(f"Error: {str(e)}")
             finally:
-                cursor.close()
-                connection.close()
+                if cursor:
+                   cursor.close()
+                if connection:
+                   connection.close()    
         return render_template('login.html')
-  
 
 
 
@@ -115,12 +143,14 @@ def register_routes(app):
         }
         return render_template('config.html', config_info=config_info)
     
+    @app.route('/logout')
+    def logout():
+        session.pop('username', None)  # Remove username from session
+        session.pop('user_id', None)   # Optionally, remove other session keys
+        flash("You have been logged out", "info")
+        return redirect(url_for('login'))
     
-    # @app.route('/logout')
-    # def logout():
-    #  session.clear()
-    # flash("You have been logged out", "info")
-    # return redirect(url_for('login'))
+    
     # @app.route('/test_db')
     # def test_db():
     #     try:
