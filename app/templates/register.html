@@ -3,17 +3,120 @@
 {% block title %}Register - FriendJournal{% endblock %}
 
 {% block content %}
-<h2 class="text-lg font-semibold text-blue-500">Register</h2>
-<form method="POST" action="{{ url_for('register') }}">
-    <label>Username:</label>
-    <input type="text" name="username" class="border rounded px-2 py-1" required>
-    <br>
-    <label>Email:</label>
-    <input type="email" name="email" class="border rounded px-2 py-1" required>
-    <br>
-    <label>Password:</label>
-    <input type="password" name="password" class="border rounded px-2 py-1" required>
-    <br>
-    <button type="submit" class="bg-green-500 text-white rounded px-4 py-2 mt-2">Register</button>
-</form>
+<div class="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2">
+            <!-- Left Side  -->
+            <div class="relative">
+                
+                <div class="absolute inset-0 bg-cover bg-center" 
+                     style="background-image: url('{{ url_for('static', filename='images/friendship3.jpg') }}');">
+                    <div class="absolute inset-0 bg-gradient-to-br from-green-600/80 to-yellow-600/80"></div>
+                </div>
+                
+               
+                <div class="relative h-full flex flex-col justify-center px-8 py-12 text-white">
+                    <h1 class="text-4xl md:text-5xl font-semibold mb-6 leading-tight">
+                        Welcome to Friend Memoirs Hub!
+                    </h1>
+                    <p class="text-lg md:text-xl mb-8 opacity-90">
+                        Celebrate your friendships and create lasting memories together.
+                    </p>
+                  
+                </div>
+            </div>
+
+            <!-- Right Side - Registration Form -->
+            <div class="p-8 lg:p-12">
+                <div class="max-w-md mx-auto">
+                    <h2 class="text-3xl font-semibold text-gray-900 mb-8">Create an Account</h2>
+                    <form method="POST" action="{{ url_for('register') }}" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-poppins text-gray-700 mb-2">Username</label>
+                            <input type="text" name="username" required
+                                class="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm  focus:border-blue-500 transition-colors"
+                                placeholder="Choose a username">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-poppins text-gray-700 mb-2">Email Address</label>
+                            <input type="email" name="email" required
+                                class="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm  focus:border-blue-500 transition-colors"
+                                placeholder="you@example.com">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-poppins text-gray-700 mb-2">Password</label>
+                            <input type="password" name="password" required
+                                class="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm  focus:border-blue-500 transition-colors"
+                                placeholder="••••••••">
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" name="terms" id="terms" required
+                                class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-colors">
+                            <label for="terms" class="ml-3 text-sm text-gray-600">
+                                I accept the 
+                                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Terms of Service</a>
+                                and
+                                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                            Create Account
+                        </button>
+
+                        <p class="text-center text-sm text-gray-600 mt-4">
+                            Already have an account?
+                            <a href="{{ url_for('login') }}" class="font-medium text-blue-600 hover:text-blue-500 underline">
+                                Log in
+                            </a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
