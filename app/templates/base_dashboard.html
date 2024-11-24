@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FriendJournal Dashboard{% endblock %}</title>
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+</head>
+<body class="flex min-h-screen bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="fixed inset-y-0 left-0 w-64 bg-gray-800 transition-transform duration-300 ease-in-out transform md:translate-x-0 -translate-x-full" id="sidebar">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-700">
+            <h2 class="text-xl font-bold text-white">FriendJournal</h2>
+            <button class="text-white md:hidden" onclick="toggleSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="mt-4">
+            <a href="{{ url_for('dashboard') }}" class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                <i class="fas fa-home w-5"></i>
+                <span class="ml-3">Dashboard</span>
+            </a>
+            <a href="{{ url_for('add_milestone') }}" class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                <i class="fas fa-plus-circle w-5"></i>
+                <span class="ml-3">Add Milestone</span>
+            </a>
+            <a href="#" class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                <i class="fas fa-calendar w-5"></i>
+                <span class="ml-3">Calendar</span>
+            </a>
+            <a href="#" class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                <i class="fas fa-chart-bar w-5"></i>
+                <span class="ml-3">Statistics</span>
+            </a>
+            <a href="{{ url_for('logout') }}" class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                <i class="fas fa-sign-out-alt w-5"></i>
+                <span class="ml-3">Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Mobile toggle button -->
+    <button class="fixed top-4 left-4 z-50 p-2 bg-gray-800 rounded-md text-white md:hidden" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="flex-1 ml-0 md:ml-64 min-h-screen">
+        <main class="p-6">
+            {% block content %}{% endblock %}
+        </main>
+        
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
