@@ -155,38 +155,63 @@ def register_routes(app):
             flash(session['flash_message'], 'success')
             session.pop('flash_message', None)  # Remove the message from the session
             
-        # Calculate the values for the quick stats
-        user_id = session['user_id']
-        connection = app.get_db_connection()
-        cursor = connection.cursor(dictionary=True)
+        try:
+            # Calculate the values for the quick stats
+            user_id = session['user_id']
+            connection = app.get_db_connection()
+            cursor = connection.cursor(dictionary=True)
+            
+            # Calculate completed milestones
+        
+            cursor.execute("SELECT COUNT(*) AS completed_count FROM milestones WHERE user_id = %s AND date < NOW()", (user_id,))
+            completed_count = cursor.fetchone()['completed_count']
 
-        # Calculate completed milestones
-        cursor.execute("SELECT COUNT(*) AS completed_count FROM milestones WHERE user_id = %s AND date < NOW()", (user_id,))
-        completed_count = cursor.fetchone()['completed_count']
+           # Calculate upcoming milestones
+            cursor.execute("SELECT COUNT(*) AS upcoming_count FROM milestones WHERE user_id = %s AND date >= NOW()", (user_id,))
+            upcoming_count = cursor.fetchone()['upcoming_count']
+        
+        
+        
+            # Split milestones into upcoming and completed
+            cursor.execute("SELECT * FROM milestones WHERE user_id = %s AND date >= NOW() ORDER BY date ASC", (user_id,))
+            upcoming_milestones = cursor.fetchall()
 
-        # Calculate upcoming milestones
-        cursor.execute("SELECT COUNT(*) AS upcoming_count FROM milestones WHERE user_id = %s AND date >= NOW()", (user_id,))
-        upcoming_count = cursor.fetchone()['upcoming_count']
-
-        # Calculate days active
-        cursor.execute("SELECT MIN(date) AS first_milestone_date FROM milestones WHERE user_id = %s", (user_id,))
-        first_milestone_date = cursor.fetchone()['first_milestone_date']
-        if first_milestone_date:
-            first_milestone_datetime = datetime.combine(first_milestone_date, datetime.min.time())
-            days_active = (datetime.now() - first_milestone_datetime).days
-        else:
-            days_active = 0
+            cursor.execute("SELECT * FROM milestones WHERE user_id = %s AND date < NOW() ORDER BY date DESC", (user_id,))
+            completed_milestones = cursor.fetchall()
+            
+            
+         # Calculate days active
+            cursor.execute("SELECT MIN(date) AS first_milestone_date FROM milestones WHERE user_id = %s", (user_id,))
+            first_milestone_date = cursor.fetchone()['first_milestone_date']
+            if first_milestone_date:
+               first_milestone_datetime = datetime.combine(first_milestone_date, datetime.min.time())
+               days_active = (datetime.now() - first_milestone_datetime).days
+            else:
+                 days_active = 0
 
         # Retrieve milestones
-        cursor.execute("SELECT id, title, description, date FROM milestones WHERE user_id = %s", (user_id,))
-        milestones = cursor.fetchall()
+            cursor.execute("SELECT id, title, description, date, is_completed FROM milestones WHERE user_id = %s", (user_id,))
+            milestones = cursor.fetchall()
+            
+            upcoming_milestones = [m for m in milestones if datetime.combine(m['date'], datetime.min.time()) >= datetime.now()]
+            completed_milestones = [m for m in milestones if datetime.combine(m['date'], datetime.min.time()) < datetime.now() ]
 
-        cursor.close()
-        connection.close()
-
-        return render_template('dashboard.html', completed_count=completed_count, upcoming_count=upcoming_count, days_active=days_active, milestones=milestones)
+        
+        finally:
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
+                    
+        return render_template('dashboard.html', completed_count=completed_count, upcoming_count=upcoming_count, days_active=days_active, milestones=milestones, upcoming_milestones=upcoming_milestones, completed_milestones=completed_milestones)
     
     
+    @app.route('/error')
+    def error():
+        return render_template('error.html'), 500
+    
+    
+        
     @app.route('/add_milestone', methods=['GET', 'POST'])
     def add_milestone():
         if 'user_id' not in session:
@@ -267,19 +292,6 @@ def register_routes(app):
         return redirect(url_for('login'))
     
     
-   
     
     
-    # @app.route('/test_db')
-    # def test_db():
-    #     try:
-    #         # Get a database connection
-    #         connection = app.get_db_connection()
-    #         cursor = connection.cursor()
-    #         cursor.execute("SELECT 1")
-    #         result = cursor.fetchone()
-    #         cursor.close()
-    #         connection.close()
-    #         return f"Database connection successful: {result}"
-    #     except Exception as e:
-    #         return f"Database connection failed: {str(e)}"
+    
