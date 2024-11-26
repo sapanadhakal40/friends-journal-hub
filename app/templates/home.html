@@ -9,25 +9,36 @@
     <div class="container mx-auto">
         <h1 class="text-4xl font-bold text-green-700 mb-4">Welcome to Friend Memoirs Hub!</h1>
         <p class="text-lg text-green-600 mb-6  max-w-2xl mx-auto">Celebrate your friendships and track unforgettable moments.</p>
-        <a href="#features" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg">Explore Features</a>
+        <a href="#features" class="bg-green-700 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg">Explore Features</a>
     </div>
 </section>
 
 <!-- Features Section -->
 <section id="features" class="py-16">
     <div class="container mx-auto text-center">
-        <h2 class="text-3xl font-bold text-gray-800 mb-8">Features</h2>
+        <h2 class="text-2xl font-bold text-gray-800 mb-8">Features</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="p-6 bg-white shadow-lg rounded-lg hover:shadow-2xl hover:scale-105 transform transition duration-300">
-                <h3 class="text-xl font-bold text-green-700 mb-2">Friendship Milestones</h3>
+
+
+            <div class="p-6 bg-white shadow-lg rounded-lg  hover:shadow-2xl hover:scale-105 transform transition duration-300">
+                <div class="flex items-center flex-col mb-3">
+                <i class="fas fa-trophy text-2xl text-green-700 mr-3"></i>
+                    <h3 class="text-lg font-semibold text-green-700 mb-1">Friendship Milestones</h3>
+                </div>
                 <p>Track and celebrate key moments with your friends.</p>
             </div>
             <div class="p-6 bg-white shadow-lg rounded-lg hover:shadow-2xl hover:scale-105 transform transition duration-300">
-                <h3 class="text-xl font-bold text-green-700 mb-2">Memory Sharing</h3>
+                <div class="flex flex-col items-center mb-3">
+                    <i class="fas fa-calendar-check text-green-700 text-2xl mr-3"></i>
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">Memory Sharing</h3>
+                </div>
                 <p>Upload and share photos and notes with friends.</p>
             </div>
             <div class="p-6 bg-white shadow-lg rounded-lg hover:shadow-2xl hover:scale-105 transform transition duration-300">
-                <h3 class="text-xl font-bold text-green-700 mb-2">Friend Network</h3>
+                <div class="flex flex-col items-center mb-3">
+                    <i class="fas fa-users text-green-700 text-2xl mr-3"></i>
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">Friend Network</h3>
+                </div>
                 <p>Connect and maintain your social circle with ease.</p>
             </div>
         </div>
@@ -36,19 +47,22 @@
 
 
 <!-- About Us Section -->
-<section id="about" class="bg-white  py-10 px-4">
+<section id="about" class="bg-white py-10 px-4">
     <div class="container mx-auto shadow-lg p-8 rounded-lg">
         <article class="text-center mb-10">
-            <h2 class="text-3xl font-semibold mb-4">About FriendJournal</h2>
+            <h2 class="text-2xl font-bold mb-4">About FriendJournal</h2>
             <p class="text-lg">
                 At FriendJournal, we believe that memories shared with friends are some of the most cherished moments in life.FriendJournal helps you keep those memories alive, together with friends.
             </p>
         </article>
         
-        <div class="flex flex-col md:flex-row md:space-x-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- appOur History Section -->
             <article class="about-item mb-8 md:mb-0 p-6 rounded-lg shadow-lg  transition-transform duration-500 ease-in-out hover:scale-105">
-                <h3 class="text-xl font-semibold mb-3">Our History</h3>
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-history text-green-700 text-2xl mr-3"></i>
+                    <h3 class="text-xl font-semibold text-black">Our History</h3>
+                </div>
                 <p class="text-md">
                     Founded in 2024, FriendJournal started with the idea of helping people document their friendships in a meaningful way. FriendJournal is a trusted space for friends to reflect, share, and grow together.
                 </p>
@@ -56,7 +70,10 @@
 
             <!-- Our Mission Section -->
             <article class="about-item p-6 rounded-lg shadow-lg transition-transform duration-500 ease-in-out hover:scale-105">
-                <h3 class="text-xl font-semibold mb-3">Our Mission</h3>
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-bullseye text-green-700 text-2xl mr-3"></i>
+                    <h3 class="text-xl font-semibold text-black">Our Mission</h3>
+                </div>
                 <p class="text-md">
                     Our mission is to create a safe, creative space where people can capture and share the moments that matter most. With a focus on security, privacy, and ease of use.
                 </p>
@@ -68,12 +85,12 @@
 <!-- Contact Section -->
 <section id="contact" class="bg-green-50 py-16">
     <div class="container mx-auto text-center">
-        <h2 class="text-3xl font-bold text-gray-800 mb-8">Contact Us</h2>
+        <h2 class="text-2xl font-bold text-gray-800 mb-8">Contact Us</h2>
         <form action="#" method="post" class="max-w-lg mx-auto">
             <input type="text" name="name" placeholder="Your Name" class="w-full p-4 mb-4 border border-gray-300 rounded-lg">
             <input type="email" name="email" placeholder="Your Email" class="w-full p-4 mb-4 border border-gray-300 rounded-lg">
             <textarea name="message" placeholder="Your Message" class="w-full p-4 mb-4 border border-gray-300 rounded-lg"></textarea>
-            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg">Send Message</button>
+            <button type="submit" class="bg-green-700 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg">Send Message</button>
         </form>
     </div>
 </section>
