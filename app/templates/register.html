@@ -51,6 +51,11 @@
                                 class="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm  focus:border-blue-500 transition-colors"
                                 placeholder="••••••••">
                         </div>
+                        <div>
+                            <label class="block text-sm font-poppins text-gray-700 mb-2">Birthdate</label>
+                            <input type="date" name="birthdate" required
+                                   class="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm  focus:border-blue-500 transition-colors">
+                        </div>
 
                         <div class="flex items-center">
                             <input type="checkbox" name="terms" id="terms" required
@@ -76,11 +81,43 @@
                         </p>
                     </form>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 
+
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+      const birthdateInput = document.getElementById('birthdate');
+      const birthdateValue = birthdateInput.value;
+  
+      //Check if birthdate is selected
+      if (birthdateValue === "") {
+          alert("Please select your birthdate.");
+          event.preventDefault(); //Prevent form submission
+          return;
+      }
+  
+      //Check if date is valid (YYYY-MM-DD)
+      const dateParts = birthdateValue.split('-');
+      if (dateParts.length !== 3 || dateParts.some(isNaN) ) {
+          alert("Please enter a valid date.");
+          event.preventDefault();
+          return;
+      }
+  
+      // Format the date as YYYY-MM-DD (if not already in that format)
+      const year = dateParts[0];
+      const month = dateParts[1].padStart(2, '0'); //Add leading zero if needed
+      const day = dateParts[2].padStart(2, '0');   //Add leading zero if needed
+      const formattedDate = `${year}-${month}-${day}`; //Always in YYYY-MM-DD
+  
+      birthdateInput.value = formattedDate;
+  
+    });
+  </script>
 {% endblock %}
 
 
