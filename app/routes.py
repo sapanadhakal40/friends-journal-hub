@@ -1,11 +1,12 @@
 from flask import render_template, request, session, redirect, url_for, flash, current_app,jsonify
-from flask_mail import  Message
+from flask_mail import  Message, Mail
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 import os
 from datetime import datetime, timedelta
 from app import mail
 from flask_cors import cross_origin
+import re 
 
 
 
@@ -51,14 +52,25 @@ def register_routes(app):
             email = request.form['email']
             password = request.form['password']
             password_hash = generate_password_hash(password)
+            birthdate_str = request.form['birthdate']
 
             try:
+                
+                
+                if not all ([username,email,password,birthdate_str]):
+                    raise ValueError('All fields are required')
+                
+                if not re.match(r'^\d{4}-\d{2}-\d{2}$', birthdate_str):
+                    raise ValueError('Invalid birthdate format.Please use YYYY-MM-DD.')
+                birthdate = datetime.strptime(birthdate_str, '%Y-%m-%d').date()
+                
+                password_hash = generate_password_hash(password)
                 connection = app.get_db_connection()
                 cursor = connection.cursor()
 
                 cursor.execute(
-                    "INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)",
-                    (username, email, password_hash),
+                    "INSERT INTO users (username, email, password_hash, birthdate) VALUES (%s, %s, %s,%s)",
+                    (username, email, password_hash, birthdate),
                 )
                 connection.commit()
                 
@@ -113,16 +125,15 @@ def register_routes(app):
                   print(f"Stored hash: {user['password_hash']}")  # Debug: Print stored hash
                   if check_password_hash(user['password_hash'], password):
                     session['user_id'] = user['id']
+                    session['user_name'] = user['username']
                     session['flash_message'] = 'Login successful!'  # Store flash message in session
                     
                     return redirect(url_for('dashboard'))
                   else:
                     flash('Invalid email or password!', 'danger')
-                else:
-                   flash('Invalid email or password!', 'danger')
-                   
+            
                   # Consume remaining results if any
-                cursor.fetchall()   
+                
                 
                 
             except Exception as e:
@@ -130,7 +141,8 @@ def register_routes(app):
                print(f"Error: {str(e)}")
             finally:
                 if cursor:
-                   cursor.close()
+                    cursor.fetchall()  
+                    cursor.close()
                 if connection:
                    connection.close()    
         return render_template('login.html')
@@ -158,6 +170,7 @@ def register_routes(app):
         try:
             # Calculate the values for the quick stats
             user_id = session['user_id']
+            user_name = session.get('user_name', 'User') 
             connection = app.get_db_connection()
             cursor = connection.cursor(dictionary=True)
             
@@ -199,11 +212,12 @@ def register_routes(app):
         
         finally:
             if cursor:
+                cursor.fetchall()  # Ensure all results are read
                 cursor.close()
             if connection:
                 connection.close()
                     
-        return render_template('dashboard.html', completed_count=completed_count, upcoming_count=upcoming_count, days_active=days_active, milestones=milestones, upcoming_milestones=upcoming_milestones, completed_milestones=completed_milestones)
+        return render_template('dashboard.html', user_name=user_name, completed_count=completed_count, upcoming_count=upcoming_count, days_active=days_active, milestones=milestones, upcoming_milestones=upcoming_milestones, completed_milestones=completed_milestones)
     
     
     @app.route('/error')
@@ -272,8 +286,37 @@ def register_routes(app):
                 cursor.close()
             if connection:
                 connection.close()
-    
+  
+    @app.route('/calendar')
+    def calendar():
+        if 'user_id' not in session:
+            flash('Please log in to access the calendar', 'danger')
+            return redirect(url_for('login'))
+        return render_template('calendar.html')
+
+
+
+    @app.route('/api/events')
+    def get_events():
+        if 'user_id' not in session:
+            return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+
+        user_id = session['user_id']
+        connection = app.get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute("SELECT title, date AS start FROM milestones WHERE user_id = %s", (user_id,))
+        events = cursor.fetchall()
+
+        cursor.close()
+        connection.close()
+
+        return jsonify(events)
        
+       
+  
+
+ 
     @app.route('/config')
     def config():
      # Display controlled config information
@@ -292,6 +335,5 @@ def register_routes(app):
         return redirect(url_for('login'))
     
     
-    
-    
+   
     
