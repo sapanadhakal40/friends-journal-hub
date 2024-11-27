@@ -5,6 +5,7 @@ from itsdangerous import URLSafeTimedSerializer
 import os
 from datetime import datetime, timedelta
 from app import mail
+
 from flask_cors import cross_origin
 import re 
 
@@ -297,6 +298,7 @@ def register_routes(app):
 
 
     @app.route('/api/events')
+    @cross_origin()
     def get_events():
         if 'user_id' not in session:
             return jsonify({'success': False, 'message': 'Unauthorized'}), 401
@@ -305,16 +307,54 @@ def register_routes(app):
         connection = app.get_db_connection()
         cursor = connection.cursor(dictionary=True)
 
-        cursor.execute("SELECT title, date AS start FROM milestones WHERE user_id = %s", (user_id,))
-        events = cursor.fetchall()
+        try:
+            # Fetch milestones
+            cursor.execute("""
+                SELECT 
+                    title, 
+                    DATE_FORMAT(date, '%Y-%m-%d') AS start, 
+                    'milestone' AS event_type 
+                FROM milestones 
+                WHERE user_id = %s
+            """, (user_id,))
+            milestones = cursor.fetchall()
 
-        cursor.close()
-        connection.close()
+            
+        # Fetch user's birthdate
+            cursor.execute("SELECT birthdate FROM users WHERE id = %s", (user_id,))
+            birthdate_data = cursor.fetchone()
+             
+            birthdays = []
+            if birthdate_data and birthdate_data['birthdate']:
+               birthdate = birthdate_data['birthdate']
+            if isinstance(birthdate, str):  # Handle birthdate as a string
+                birthdate = datetime.strptime(birthdate, '%Y-%m-%d').date()
 
-        return jsonify(events)
-       
-       
-  
+            today = datetime.now().date()
+            
+            upcoming_birthday = datetime(today.year, birthdate.month, birthdate.day).date()
+            if upcoming_birthday < today:
+                upcoming_birthday = datetime(today.year + 1, birthdate.month, birthdate.day).date()
+
+            birthdays.append({
+                "title": "Birthday",
+                "start": upcoming_birthday.strftime("%Y-%m-%d"),
+                "event_type": "birthday"
+            })
+
+           # Combine milestones and birthdays
+            all_events = milestones + birthdays
+
+            return jsonify(all_events)
+
+        except Exception as e:
+         # Rollback database changes in case of error
+            print(f"Error fetching events: {e}")
+            return jsonify({'success': False, 'message': 'Error fetching events'}), 500
+
+        finally:
+            cursor.close()
+            connection.close()
 
  
     @app.route('/config')
