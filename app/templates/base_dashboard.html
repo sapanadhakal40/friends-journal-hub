@@ -6,7 +6,7 @@
     <title>{% block title %}FriendJournal Dashboard{% endblock %}</title>
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css">
+   
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
@@ -28,18 +28,19 @@
                 <i class="fas fa-home w-5"></i>
                 <span class="ml-3">Dashboard</span>
             </a>
+            <a href="{{ url_for('add_friend') }}" class="flex items-center px-6 py-3 text-gray-300 hover:bg-emerald-600 hover:text-white transition-colors duration-200">
+                <i class="fas fa-user w-5"></i>
+                <span class="ml-3">Add Friend</span>
+            </a>
             <a href="{{ url_for('add_milestone') }}" class="flex items-center px-6 py-3 text-gray-300 hover:bg-emerald-600 hover:text-white transition-colors duration-200">
                 <i class="fas fa-plus-circle w-5"></i>
                 <span class="ml-3">Add Milestone</span>
             </a>
-            <a href="#" class="flex items-center px-6 py-3 text-gray-300 hover:bg-emerald-600 hover:text-white transition-colors duration-200">
+            <a href="{{url_for('calendar')}}" class="flex items-center px-6 py-3 text-gray-300 hover:bg-emerald-600 hover:text-white transition-colors duration-200">
                 <i class="fas fa-calendar w-5"></i>
                 <span class="ml-3">Calendar</span>
             </a>
-            <a href="#" class="flex items-center px-6 py-3 text-gray-300 hover:bg-emerald-600 hover:text-white transition-colors duration-200">
-                <i class="fas fa-chart-bar w-5"></i>
-                <span class="ml-3">Statistics</span>
-            </a>
+            
             <a href="{{ url_for('logout') }}" class="flex items-center px-6 py-3 text-gray-300 hover:bg-emerald-600 hover:text-white transition-colors duration-200">
                 <i class="fas fa-sign-out-alt w-5"></i>
                 <span class="ml-3">Logout</span>
@@ -59,7 +60,7 @@
         </main>
         
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js"></script>
+   
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
