@@ -160,14 +160,15 @@ def register_routes(app):
             flash('Please log in to access the dashboard', 'danger')
             return redirect(url_for('login'))
         
-        
+
         
          
         # Retrieve and flash the message from the session
         if 'flash_message' in session:
             flash(session['flash_message'], 'success')
             session.pop('flash_message', None)  # Remove the message from the session
-            
+         
+       
         try:
             # Calculate the values for the quick stats
             user_id = session['user_id']
@@ -175,16 +176,25 @@ def register_routes(app):
             connection = app.get_db_connection()
             cursor = connection.cursor(dictionary=True)
             
+          
+       
+            cursor.execute("SELECT id, friend_name, friend_email FROM friends WHERE user_id = %s", (user_id,))
+            friends = cursor.fetchall()
             # Calculate completed milestones
         
+           
+              
             cursor.execute("SELECT COUNT(*) AS completed_count FROM milestones WHERE user_id = %s AND date < NOW()", (user_id,))
             completed_count = cursor.fetchone()['completed_count']
+           
 
-           # Calculate upcoming milestones
+  # Calculate upcoming milestones
+           
             cursor.execute("SELECT COUNT(*) AS upcoming_count FROM milestones WHERE user_id = %s AND date >= NOW()", (user_id,))
             upcoming_count = cursor.fetchone()['upcoming_count']
+           
         
-        
+      
         
             # Split milestones into upcoming and completed
             cursor.execute("SELECT * FROM milestones WHERE user_id = %s AND date >= NOW() ORDER BY date ASC", (user_id,))
@@ -193,15 +203,17 @@ def register_routes(app):
             cursor.execute("SELECT * FROM milestones WHERE user_id = %s AND date < NOW() ORDER BY date DESC", (user_id,))
             completed_milestones = cursor.fetchall()
             
-            
+                
+
+            milestones = cursor.fetchall()
          # Calculate days active
             cursor.execute("SELECT MIN(date) AS first_milestone_date FROM milestones WHERE user_id = %s", (user_id,))
             first_milestone_date = cursor.fetchone()['first_milestone_date']
             if first_milestone_date:
-               first_milestone_datetime = datetime.combine(first_milestone_date, datetime.min.time())
-               days_active = (datetime.now() - first_milestone_datetime).days
+                first_milestone_datetime = datetime.combine(first_milestone_date, datetime.min.time())
+                days_active = (datetime.now() - first_milestone_datetime).days
             else:
-                 days_active = 0
+                days_active = 0
 
         # Retrieve milestones
             cursor.execute("SELECT id, title, description, date, is_completed FROM milestones WHERE user_id = %s", (user_id,))
@@ -218,15 +230,118 @@ def register_routes(app):
             if connection:
                 connection.close()
                     
-        return render_template('dashboard.html', user_name=user_name, completed_count=completed_count, upcoming_count=upcoming_count, days_active=days_active, milestones=milestones, upcoming_milestones=upcoming_milestones, completed_milestones=completed_milestones)
+        return render_template('dashboard.html', user_name=user_name, completed_count=completed_count, upcoming_count=upcoming_count, days_active=days_active, milestones=milestones, upcoming_milestones=upcoming_milestones, completed_milestones=completed_milestones, friends=friends)
     
     
     @app.route('/error')
     def error():
         return render_template('error.html'), 500
     
+    @app.route('/add_friend', methods=['GET', 'POST'])
+    def add_friend():
+        if 'user_id' not in session:
+            flash('Please log in to add a friend', 'danger')
+            return redirect(url_for('login'))
+
+        if request.method == 'POST':
+            user_id = session['user_id']
+            friend_name = request.form['friend_name']
+            friend_email = request.form['friend_email']
+
+            try:
+
+            # Add friend to the database
+                connection = app.get_db_connection()
+                cursor = connection.cursor()
+                cursor.execute(
+                    "INSERT INTO friends (user_id, friend_name, friend_email) VALUES (%s, %s, %s)",
+                    (user_id, friend_name, friend_email),
+               )
+                connection.commit()
+
+                flash('Friend added successfully!', 'success')
+                return redirect(url_for('dashboard'))
+            except Exception as e:
+                flash(f'Error: {str(e)}', 'danger')
+            finally:
+               if cursor:
+                cursor.close()
+               if connection:
+                connection.close()
+
+        return render_template('add_friend.html')
     
-        
+    @app.route('/edit_friend/<int:friend_id>', methods=['GET', 'POST'])
+    def edit_friend(friend_id):
+        if 'user_id' not in session:
+            flash('Please log in to edit a friend', 'danger')
+            return redirect(url_for('login'))
+
+        connection = app.get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+        try:
+        # Fetch the friend's details
+           cursor.execute("SELECT * FROM friends WHERE id = %s", (friend_id,))
+           friend = cursor.fetchone()
+
+           if not friend or friend['user_id'] != session['user_id']:
+              flash('Friend not found or unauthorized access.', 'danger')
+              return redirect(url_for('dashboard'))
+
+           if request.method == 'POST':
+                friend_name = request.form['friend_name']
+                friend_email = request.form['friend_email']
+
+            # Update friend details
+                cursor.execute(
+                    "UPDATE friends SET friend_name = %s, friend_email = %s WHERE id = %s",
+                     (friend_name, friend_email, friend_id)
+                )
+                connection.commit()
+
+                flash('Friend details updated successfully!', 'success')
+                return redirect(url_for('dashboard'))
+
+        finally:
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
+
+        return render_template('edit_friend.html', friend=friend)
+    
+    @app.route('/delete_friend/<int:friend_id>', methods=['POST'])
+    def delete_friend(friend_id):
+        if 'user_id' not in session:
+           flash('Please log in to delete a friend', 'danger')
+           return redirect(url_for('login'))
+
+        connection = app.get_db_connection()
+        cursor = connection.cursor()
+        try:
+        # Ensure the friend belongs to the logged-in user
+            cursor.execute("SELECT * FROM friends WHERE id = %s AND user_id = %s", (friend_id, session['user_id']))
+            friend = cursor.fetchone()
+            if not friend:
+               flash('Friend not found or unauthorized access.', 'danger')
+               return redirect(url_for('dashboard'))
+
+        # Delete the friend
+            cursor.execute("DELETE FROM friends WHERE id = %s", (friend_id,))
+            connection.commit()
+            flash('Friend deleted successfully!', 'success')
+
+        finally:
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
+
+        return redirect(url_for('dashboard'))
+
+    
+    
+    
     @app.route('/add_milestone', methods=['GET', 'POST'])
     def add_milestone():
         if 'user_id' not in session:
@@ -297,7 +412,7 @@ def register_routes(app):
 
 
 
-    @app.route('/api/events')
+    @app.route('/api/events', methods=['GET'])
     @cross_origin()
     def get_events():
         if 'user_id' not in session:
@@ -357,6 +472,30 @@ def register_routes(app):
             connection.close()
 
  
+ 
+ 
+ 
+ 
+    @app.route('/contact', methods=['GET', 'POST'])
+    def contact():
+        if request.method == 'POST':
+            name = request.form['name']
+            email = request.form['email']
+            message = request.form['message']
+
+        # Send email
+            msg = Message('Contact Form Submission', sender=email, recipients=['your_email@example.com'])
+            msg.body = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+            try:
+                mail.send(msg)
+                flash('Message sent successfully!', 'success')
+            except Exception as e:
+               flash(f'Error sending message: {str(e)}', 'danger')
+
+            return redirect(url_for('contact'))
+
+        return render_template('contact.html')
+
     @app.route('/config')
     def config():
      # Display controlled config information
