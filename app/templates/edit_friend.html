@@ -1,0 +1,19 @@
+{% extends "base_dashboard.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Edit Friend</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="friend_name">Name:</label>
+            <input type="text" id="friend_name" name="friend_name" value="{{ friend.friend_name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="friend_email">Email:</label>
+            <input type="email" id="friend_email" name="friend_email" value="{{ friend.friend_email }}" required>
+        </div>
+        <button type="submit">Save Changes</button>
+        <a href="{{ url_for('dashboard') }}">Cancel</a>
+    </form>
+</div>
+{% endblock %}
