@@ -29,9 +29,17 @@
                 <span class="ml-3">Dashboard</span>
             </a>
             <a href="{{ url_for('add_friend') }}" class="flex items-center px-6 py-3 text-gray-300 hover:bg-emerald-600 hover:text-white transition-colors duration-200">
-                <i class="fas fa-user w-5"></i>
+                <i class="fas fa-user-plus w-5"></i>
                 <span class="ml-3">Add Friend</span>
             </a>
+          
+            <a href="{{ url_for('friend_list') }}" class="flex items-center px-6 py-3 text-gray-300 hover:bg-emerald-600 hover:text-white transition-colors duration-200">
+                <i class="fas fa-user-circle w-5"></i>
+                <span class="ml-3">Friend list</span>
+            </a>
+           
+
+            
             <a href="{{ url_for('add_milestone') }}" class="flex items-center px-6 py-3 text-gray-300 hover:bg-emerald-600 hover:text-white transition-colors duration-200">
                 <i class="fas fa-plus-circle w-5"></i>
                 <span class="ml-3">Add Milestone</span>
@@ -60,6 +68,8 @@
         </main>
         
     </div>
+
+  
    
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
