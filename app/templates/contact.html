@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-6">
+    <h1 class="text-3xl font-bold mb-4">Contact Us</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mb-4">
+                {% for category, message in messages %}
+                    <div class="p-4 mb-4 text-sm text-white bg-{{ 'green' if category == 'success' else 'red' }}-500 rounded-lg">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <form action="{{ url_for('contact') }}" method="post" class="max-w-lg mx-auto">
+        <input type="text" name="name" placeholder="Your Name" class="w-full p-4 mb-4 border border-gray-300 rounded-lg" required>
+        <input type="email" name="email" placeholder="Your Email" class="w-full p-4 mb-4 border border-gray-300 rounded-lg" required>
+        <textarea name="message" placeholder="Your Message" class="w-full p-4 mb-4 border border-gray-300 rounded-lg" required></textarea>
+        <button type="submit" class="bg-green-700 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg">Send Message</button>
+    </form>
+</div>
+{% endblock %}
