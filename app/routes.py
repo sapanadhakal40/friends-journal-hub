@@ -495,6 +495,28 @@ def register_routes(app):
             return redirect(url_for('contact'))
 
         return render_template('contact.html')
+    
+    @app.route('/friend_list')
+    def friend_list():
+        if 'user_id' not in session:
+           return redirect(url_for('login'))
+
+        user_id = session['user_id']
+        try:
+           connection = app.get_db_connection()
+           cursor = connection.cursor(dictionary=True)
+           cursor.execute("SELECT id, friend_name, friend_email FROM friends WHERE user_id = %s", (user_id,))
+           friends = cursor.fetchall()
+        finally:
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
+
+        return render_template('friend_list.html', friends=friends)
+    
+ 
+    
 
     @app.route('/config')
     def config():
