@@ -1,7 +1,7 @@
 # Project Flask
 
 ## Overview
-Project Flask is a web application built using the Flask framework. It includes features such as user registration, login, friend management, milestone tracking, and a calendar for birthday reminders.
+Friends Journal Hub is a web application built using the Flask framework. It includes features such as user registration, login, friend management, milestone tracking, and a calendar for birthday reminders.
 
 ## Features
 - User Registration and Login
